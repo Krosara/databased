@@ -1,3 +1,5 @@
 namespace Assets.Service;
 
-public class AssetContext : DbConte
+public class AssetContext {
+    
+}
