@@ -16,7 +16,6 @@ It is focused on learning how to create enterprise-level software based on the m
 
 
 ## Architecture
-\
 First draft of application architecture
 \
 ![C4 Level 2](https://user-images.githubusercontent.com/8376476/226399936-8daf2156-d375-4eb6-83f2-4235a7922cda.png)
