@@ -9,7 +9,7 @@ public class Asset : Document  {
     public string? Label { get; set; }
     // [BsonRequired]
     public string? Name { get; set; }
-    public Status Status { get; set; } = Status.InProduction;
+    public StatusAsset Status { get; set; } = StatusAsset.InProduction;
     public bool IsSoftware { get; set; } = false;
 
 }
