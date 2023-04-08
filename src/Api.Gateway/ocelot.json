@@ -1,0 +1,28 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/assets",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "9001"
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/assets",
+      "UpstreamHttpMethod": ["POST", "PUT", "GET"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/assets/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "9001"
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/assets/{id}",
+      "UpstreamHttpMethod": ["GET", "DELETE"]
+    }
+  ]
+}
