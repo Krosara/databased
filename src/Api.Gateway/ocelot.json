@@ -10,7 +10,23 @@
         }
       ],
       "UpstreamPathTemplate": "/gateway/assets",
-      "UpstreamHttpMethod": ["POST", "PUT", "GET"]
+      "UpstreamHttpMethod": ["POST", "PUT", "GET"],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 3,
+        "HttpStatusCode": 429
+      },
+      "FileCackeOptions": {
+        "TtlSeconds": 30,
+        "Region": "assetcache"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": ["read:assets"]
+      }
     },
     {
       "DownstreamPathTemplate": "/api/assets/{id}",
@@ -22,7 +38,19 @@
         }
       ],
       "UpstreamPathTemplate": "/gateway/assets/{id}",
-      "UpstreamHttpMethod": ["GET", "DELETE"]
+      "UpstreamHttpMethod": ["GET", "DELETE"],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 3,
+        "HttpStatusCode": 429
+      },
+      "FileCackeOptions": {
+        "TtlSeconds": 30,
+        "Region": "assetcache"
+      }
     }
   ]
 }
