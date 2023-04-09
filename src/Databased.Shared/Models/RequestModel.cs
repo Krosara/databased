@@ -13,11 +13,11 @@ public class Request {
     [BsonRequired]
     public Category Category { get; set; }
     [BsonRequired]
-    public Person CreatedBy { get; set; }
+    public User CreatedBy { get; set; }
     [BsonRequired]
-    public Person RequestedBy { get; set; } //Person who submitted request
+    public User RequestedBy { get; set; } //Person who submitted request
     [BsonRequired]
-    public Person RequestedFor { get; set; }  //Person for whom request was submitted, Default: Person RequestedBy
+    public User RequestedFor { get; set; }  //Person for whom request was submitted, Default: Person RequestedBy
     [BsonRequired]
     public Team Team { get; set; }
     [BsonRequired]
@@ -27,7 +27,7 @@ public class Request {
     public DateTime UpdatedAt { get; set; }
     public DateTime CompletedAt { get; set; }
 
-    public Request(string subject, Category category, Person createdBy, Person requestedBy, Person requestedFor, Team team, List<Comment> comments)
+    public Request(string subject, Category category, User createdBy, User requestedBy, User requestedFor, Team team, List<Comment> comments)
     {
         Id = ObjectId.GenerateNewId().ToString();
         Subject = subject;
@@ -40,7 +40,7 @@ public class Request {
         CreatedAt = DateTime.Now;
         UpdatedAt = DateTime.Now;
     }
-    public Request(string subject, Category category, Person createdBy, Person requestedBy, Person requestedFor, Team team, List<Comment> comments, List<Asset> assets)
+    public Request(string subject, Category category, User createdBy, User requestedBy, User requestedFor, Team team, List<Comment> comments, List<Asset> assets)
     {
         Id = ObjectId.GenerateNewId().ToString();
         Subject = subject;

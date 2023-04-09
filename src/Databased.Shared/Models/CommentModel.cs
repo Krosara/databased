@@ -8,10 +8,10 @@ public class Comment {
     public string Id { get; set; }
     [BsonRequired]
     public string Content { get; set; }
-    public Person CreatedBy { get; set; }
+    public User CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }
 
-    public Comment(string content, Person createdBy)
+    public Comment(string content, User createdBy)
     {
         Id = ObjectId.GenerateNewId().ToString();
         Content = content;
