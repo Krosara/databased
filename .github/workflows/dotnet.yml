@@ -33,5 +33,18 @@ jobs:
       run: cd src/Requests.Service; dotnet restore
     - name: Build
       run: cd src/Requests.Service; dotnet build --no-restore
+  build-api-gateway:
+    name: Build API Gateway
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore dependencies
+      run: cd src/Api.Gateway; dotnet restore
+    - name: Build
+      run: cd src/Api.Gateway; dotnet build --no-restore
 #     - name: Test
 #       run: dotnet test --no-build --verbosity normal
