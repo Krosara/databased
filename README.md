@@ -12,7 +12,9 @@ It is focused on learning how to create enterprise-level software based on the m
 
 **Microservices:** .NET Core
 
-**Message Queue:** RabbitMQ
+**Message Queue:** MassTransit RabbitMQ
+
+**API Gateway:** Ocelot
 
 
 ## Architecture
