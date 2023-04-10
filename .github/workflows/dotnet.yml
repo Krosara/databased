@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-asset-service:
+  build-assets-service:
     name: Build Asset Microservice
     runs-on: ubuntu-latest
     steps:
@@ -20,5 +20,18 @@ jobs:
       run: cd src/Assets.Service; dotnet restore
     - name: Build
       run: cd src/Assets.Service; dotnet build --no-restore
+  build-requests-service:
+    name: Build Requests Microservice
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore dependencies
+      run: cd src/Requests.Service; dotnet restore
+    - name: Build
+      run: cd src/Requests.Service; dotnet build --no-restore
 #     - name: Test
 #       run: dotnet test --no-build --verbosity normal
