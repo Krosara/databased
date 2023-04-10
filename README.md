@@ -16,6 +16,7 @@ It is focused on learning how to create enterprise-level software based on the m
 
 **API Gateway:** Ocelot
 
+**Storage:** MongoDB
 
 ## Architecture
 First draft of application architecture
