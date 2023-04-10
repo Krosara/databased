@@ -22,10 +22,6 @@
       "FileCackeOptions": {
         "TtlSeconds": 30,
         "Region": "assetcache"
-      },
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": ["read:assets"]
       }
     },
     {
@@ -50,6 +46,54 @@
       "FileCackeOptions": {
         "TtlSeconds": 30,
         "Region": "assetcache"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/requests",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "9002"
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/requests",
+      "UpstreamHttpMethod": ["POST", "PUT", "GET"],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 3,
+        "HttpStatusCode": 429
+      },
+      "FileCackeOptions": {
+        "TtlSeconds": 30,
+        "Region": "requestcache"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/requests/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "9002"
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/requests/{id}",
+      "UpstreamHttpMethod": ["GET", "DELETE"],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 3,
+        "HttpStatusCode": 429
+      },
+      "FileCackeOptions": {
+        "TtlSeconds": 30,
+        "Region": "requestcache"
       }
     }
   ]

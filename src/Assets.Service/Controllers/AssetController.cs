@@ -19,33 +19,19 @@ public class AssetController : ControllerBase
         _assetService = assetService;
     }
 
-    // sending message to rabbitmq
-    // [HttpPost]
-    // public async Task<IActionResult> CreateAsset(Asset asset) {
-    //     if (asset != null) {
-    //         Uri uri = new Uri("rabbitmq://localhost/assetQueue");
-    //         var endpoint = await _bus.GetSendEndpoint(uri);
-    //         await endpoint.Send(asset);
-    //         return Ok();
-    //     }
-        
-    //     return BadRequest();
-    // }
-
     [HttpPost]
-    public async Task<IActionResult> Create(Asset asset){
-        // if (!ModelState.IsValid){
-        //     return BadRequest();
-        // }
+    public async Task<IActionResult> Create(Asset asset)
+    {
         await _assetService.CreateAsync(asset);
-        // return Ok(asset.Id);
         return CreatedAtAction(nameof(GetAll), new { id = asset.Id }, asset);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(){
+    public async Task<IActionResult> GetAll()
+    {
         var assets = await _assetService.GetAsync();
-        if (assets.Any()){
+        if (assets.Any())
+        {
             return Ok(assets);
         }
         return NotFound();
@@ -53,18 +39,22 @@ public class AssetController : ControllerBase
     }
 
     [HttpGet("{id:length(24)}")]
-    public async Task<IActionResult> GetById(string id) {
+    public async Task<IActionResult> GetById(string id)
+    {
         var asset = await _assetService.GetByIdAsync(id);
-        if (asset == null) {
+        if (asset == null)
+        {
             return NotFound();
         }
         return Ok(asset);
     }
 
     [HttpPut("{id:length(24)}")]
-    public async Task<IActionResult> Update(string id, Asset newAsset){
+    public async Task<IActionResult> Update(string id, Asset newAsset)
+    {
         var asset = await _assetService.GetByIdAsync(id);
-        if (asset == null) {
+        if (asset == null)
+        {
             return BadRequest();
         }
         newAsset.Id = asset.Id;
@@ -74,9 +64,11 @@ public class AssetController : ControllerBase
     }
 
     [HttpDelete("{id:length(24)}")]
-    public async Task<IActionResult> Delete(string id) {
+    public async Task<IActionResult> Delete(string id)
+    {
         var asset = await _assetService.GetByIdAsync(id);
-        if (asset == null) {
+        if (asset == null)
+        {
             return BadRequest();
         }
         await _assetService.DeleteAsync(id);
