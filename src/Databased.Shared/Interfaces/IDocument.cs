@@ -5,6 +5,6 @@ namespace Databased.Shared.Interfaces;
 public interface IDocument {
 
     string? Id { get; set; }
-    DateTime CreatedAt { get; set; }
-    DateTime UpdatedAt { get; set; }
+    DateTimeOffset CreatedAt { get; set; }
+    DateTimeOffset UpdatedAt { get; set; }
 }
