@@ -119,7 +119,7 @@ jobs:
       shell: powershell
       run: |
         cd src\Assets.Service
-        .\.sonar\scanner\dotnet-sonarscanner begin /k:"Krosara_databased" /o:"krosara" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"Krosara_databased" /o:"krosara" /d:sonar.login="${{ secrets.SONAR_TOKEN_ASSETS }}" /d:sonar.host.url="https://sonarcloud.io"
         dotnet build --no-incremental
         .sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
       
@@ -157,11 +157,11 @@ jobs:
         dotnet tool update dotnet-sonarscanner --tool-path .sonar\scanner
     - name: Analyze
       env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_REQUESTS }}
+        SONAR_TOKEN_REQUESTS: ${{ secrets.SONAR_TOKEN_REQUESTS }}
       shell: powershell
       run: |
         cd src\Requests.Service
-        .\.sonar\scanner\dotnet-sonarscanner begin /k:"Krosara_databased" /o:"krosara" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"Krosara_databased" /o:"krosara" /d:sonar.login="${{ secrets.SONAR_TOKEN_REQUESTS }}" /d:sonar.host.url="https://sonarcloud.io"
         dotnet build --no-incremental
         .sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
       
