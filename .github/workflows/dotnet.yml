@@ -157,6 +157,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: powershell
       run: |
+        ls
         .\.sonar\scanner\dotnet-sonarscanner begin /k:"Krosara_databased" /o:"krosara" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
         cd src\Requests.Service; dotnet build --no-incremental
         .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }} "
