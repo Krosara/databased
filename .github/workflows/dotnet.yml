@@ -112,7 +112,7 @@ jobs:
       run: |
         cd src\Assets.Service
         New-Item -Path .\.sonar\scanner -ItemType Directory
-        dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+        dotnet tool update dotnet-sonarscanner --tool-path .sonar\scanner
     - name: Analyze
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
