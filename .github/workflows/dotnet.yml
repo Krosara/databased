@@ -121,7 +121,7 @@ jobs:
         cd src\Assets.Service
         .\.sonar\scanner\dotnet-sonarscanner begin /k:"Krosara_databased" /o:"krosara" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
         dotnet build --no-incremental
-        .sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }} "
+        .sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
       
   sc-requests-service:
     name: SonarCloud Requests Microservice
