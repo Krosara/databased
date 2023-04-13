@@ -28,6 +28,15 @@ builder.Services.AddMassTransit(x =>
 
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("https://localhost:5173", "https://127.0.0.1:5173", "http://localhost:5173", "http://127.0.0.1:5173").AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
+
 builder.Services.Configure<DatabaseConfiguration>(builder.Configuration.GetSection("DatabaseConfiguration"));
 
 builder.Services.AddScoped<IAssetService, AssetService>();
@@ -48,6 +57,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 
