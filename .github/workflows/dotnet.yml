@@ -110,6 +110,7 @@ jobs:
       if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
       shell: powershell
       run: |
+        cd src\Assets.Service
         New-Item -Path .\.sonar\scanner -ItemType Directory
         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
     - name: Analyze
