@@ -97,13 +97,13 @@ jobs:
     - name: Cache SonarCloud packages
       uses: actions/cache@v3
       with:
-        path: ~\sonar\cache
+        path: ~\src\Assets.Service\sonar\cache
         key: ${{ runner.os }}-sonar
     - name: Cache SonarCloud scanner
       id: cache-sonar-scanner
       uses: actions/cache@v3
       with:
-        path: .\.sonar\scanner
+        path: .\src\Assets.Service\.sonar\scanner
         key: ${{ runner.os }}-sonar-scanner
         restore-keys: ${{ runner.os }}-sonar-scanner
     - name: Install SonarCloud scanner
@@ -117,9 +117,10 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: powershell
       run: |
+        cd src\Assets.Service
         .\.sonar\scanner\dotnet-sonarscanner begin /k:"Krosara_databased" /o:"krosara" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-        cd src\Assets.Service; dotnet build --no-incremental
-        ..\..\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }} "
+        dotnet build --no-incremental
+        .sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }} "
       
   sc-requests-service:
     name: SonarCloud Requests Microservice
@@ -143,23 +144,25 @@ jobs:
       id: cache-sonar-scanner
       uses: actions/cache@v3
       with:
-        path: .\.sonar\scanner
+        path: .\src\Requests.Service\.sonar\scanner
         key: ${{ runner.os }}-sonar-scanner
         restore-keys: ${{ runner.os }}-sonar-scanner
     - name: Install SonarCloud scanner
       if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
       shell: powershell
       run: |
-        New-Item -Path .\.sonar\scanner -ItemType Directory
-        dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+        cd src\Requests.Service
+        New-Item -Path .sonar\scanner -ItemType Directory
+        dotnet tool update dotnet-sonarscanner --tool-path .sonar\scanner
     - name: Analyze
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: powershell
       run: |
+        cd src\Requests.Service
         .\.sonar\scanner\dotnet-sonarscanner begin /k:"Krosara_databased" /o:"krosara" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-        cd src\Requests.Service; dotnet build --no-incremental
-        ..\..\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }} "
+        dotnet build --no-incremental
+        .sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
       
       
       
