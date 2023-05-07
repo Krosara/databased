@@ -5,7 +5,7 @@ COPY ./Consumers ./
 COPY ./Controllers ./
 COPY ./Properties ./
 COPY ./Services ./
-COPY ./appsettings.json ./
+COPY ./appsettings.sample.json ./appsettings.json
 COPY ./Program.cs ./
 COPY ./Assets.Service.csproj ./
 
