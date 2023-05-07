@@ -6,7 +6,7 @@ on:
     - main
     - develop
     paths:
-    - './src/Databased.Shared/**'
+    - ./src/Databased.Shared/**
     
 jobs:
   build-pack-publish:
