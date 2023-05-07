@@ -1,52 +1,98 @@
 import { useEffect, useState } from 'react';
-import { DataTable } from 'primereact/datatable';
+import { DataTable, DataTableSelectionChangeEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Asset, AssetStatus } from '../types/RequestType';
 import axios from 'axios';
-
-axios.defaults.baseURL = 'https://127.0.0.1:9000';
+import { Button } from 'primereact/button';
+import { getStatus } from '../helpers/GetAssetStatusHelper';
+import { AssetModal } from '../components/AssetModal/AssetModal';
+import { Asset } from '../types/AssetType';
 
 const AssetsPage = () => {
     const [assets, setAssets] = useState<Asset[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [selected, setSelected] = useState<Asset | undefined>();
+
+    //modal
+    const [visible, setVisible] = useState<boolean>(false);
+
+    const getAssets = async (): Promise<any> => {
+        setLoading(true);
+
+        const response = await axios.get('/gateway/assets');
+        if (response.status === 200) {
+            const data = await response.data;
+            setAssets(data);
+        }
+
+        setLoading(false);
+    };
 
     useEffect(() => {
-        axios.get('/gateway/assets').then((response) => {
-            if (response.status === 200) {
-                setAssets(response.data);
-            }
-        });
-    }, []);
+        getAssets();
+    }, [visible]);
 
     const statusCell = (data: Asset) => {
-        console.log(data);
         return <div>{getStatus(data.status)}</div>;
     };
 
-    const getStatus = (status: number) => {
-        switch (status) {
-            case AssetStatus.InProduction:
-                return 'In Production';
-            case AssetStatus.BrokenDown:
-                return 'Broken Down';
-            case AssetStatus.BeingRepaired:
-                return 'Being Repaired';
-            case AssetStatus.Archived:
-                return 'Archived';
-            case AssetStatus.ToBeRemoved:
-                return 'To Be Removed';
-            default:
-                return 'Other';
-        }
+    const handleModalClose = () => {
+        setVisible(false);
+        getAssets();
     };
 
+    const onAssetSelect = () => {};
+
     return (
-        <DataTable value={assets}>
-            <Column field="id" header="ID" />
-            <Column field="createdAt" header="CreatedAt" dataType="Date" />
-            <Column field="label" header="Label" />
-            <Column field="status" header="Status" body={statusCell} />
-            <Column field="isSoftware" header="Is Software" />
-        </DataTable>
+        <div className="flex">
+            <div className="flex 1 w-2/3">
+                <AssetModal visible={visible} onHide={handleModalClose} />
+                <Button
+                    label="Add asset"
+                    onClick={() => setVisible(true)}
+                    className="mb-2 "
+                />
+
+                {assets.length > 0 ? (
+                    <DataTable
+                        lazy
+                        value={assets}
+                        dataKey="id"
+                        rowHover
+                        scrollable
+                        selectionMode="single"
+                        selection={selected}
+                        onSelectionChange={(e: any) => {
+                            setSelected(e.value);
+                        }}
+                    >
+                        <Column field="id" header="ID" />
+                        <Column
+                            field="createdAt"
+                            header="CreatedAt"
+                            dataType="Date"
+                        />
+                        <Column field="label" header="Label" />
+                        <Column
+                            field="status"
+                            header="Status"
+                            body={statusCell}
+                        />
+                        <Column field="isSoftware" header="Is Software" />
+                    </DataTable>
+                ) : (
+                    <div>Loading...</div>
+                )}
+            </div>
+            <div className="flex 1 w-1/3">
+                {selected ? (
+                    <h2>
+                        {selected.label} - {selected.name}
+                    </h2>
+                ) : (
+                    <div>Select one</div>
+                )}
+            </div>
+        </div>
     );
 };
 
