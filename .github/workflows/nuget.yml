@@ -1,27 +1,28 @@
 name: Publish Shared Nuget Package
 
-on: 
-  push:
-    paths:
-    - './src/Databased.Shared/**'
-    
-jobs:
-  build-pack-publish:
-    name: Publish Databased Shared
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 7.0.x
-    - name: Restore dependencies
-      run: cd src/Databased.Shared; dotnet restore
-    - name: Build
-      run: cd src/Databased.Shared; dotnet build
-    - name: Pack
-      run: cd src/Databased.Shared; dotnet pack
-    - name: Publish
-      run: cd src/Databased.Shared/bin/Debug; Databased.Shared.1.0.0.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+on:
+    push:
+        branches:
+            - main
+            - develop
+        paths:
+            - ./src/Databased.Shared/**
 
-      
+jobs:
+    build-pack-publish:
+        name: Publish Databased Shared
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: 7.0.x
+            - name: Restore dependencies
+              run: cd src/Databased.Shared; dotnet restore
+            - name: Build
+              run: cd src/Databased.Shared; dotnet build
+            - name: Pack
+              run: cd src/Databased.Shared; dotnet pack
+            - name: Publish
+              run: cd src/Databased.Shared/bin/Debug; Databased.Shared.1.0.0.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
