@@ -3,19 +3,27 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Request, RequestCategory } from '../types/RequestType';
 import axios from 'axios';
-
-axios.defaults.baseURL = 'https://127.0.0.1:9000';
+import { Button } from 'primereact/button';
+import { RequestModal } from '../components/RequestModal/RequestModal';
 
 const RequestsPage = () => {
-    const [requests, setRequests] = useState<Request[]>([]);
-    const [loading, setLoading] = useState();
+    const [requests, setRequests] = useState<Array<Request>>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const [visible, setVisible] = useState<boolean>(false);
+
+    const getRequests = async (): Promise<any> => {
+        setLoading(true);
+
+        const response = await axios.get('/gateway/requests');
+        if (response.status === 200) {
+            const data = await response.data;
+            setRequests(data);
+        }
+    };
 
     useEffect(() => {
-        axios.get('/gateway/requests').then((response) => {
-            if (response.status === 200) {
-                setRequests(response.data);
-            }
-        });
+        getRequests();
     }, []);
 
     const categoryCell = (data: Request) => {
@@ -39,16 +47,51 @@ const RequestsPage = () => {
         }
     };
 
+    const requestedByCell = (data: Request) => {
+        return <div>{data.requestedBy?.name}</div>;
+    };
+    const requestedForCell = (data: Request) => {
+        return <div>{data.requestedFor?.name}</div>;
+    };
+    const authorCell = (data: Request) => {
+        return <div>{data.author?.name}</div>;
+    };
+
     return (
-        <DataTable value={requests}>
-            <Column field="id" header="ID" />
-            <Column field="createdAt" header="CreatedAt" dataType="Date" />
-            <Column field="subject" header="Subject" />
-            <Column field="category" header="Category" body={categoryCell} />
-            <Column field="author.name" header="Author" />
-            <Column field="requestedBy.name" header="Requested By" />
-            <Column field="requestedFor.name" header="Requested For" />
-        </DataTable>
+        <>
+            <Button label="Make request" onClick={() => setVisible(true)} />
+            <RequestModal visible={visible} onHide={() => setVisible(false)} />
+            {requests.length > 0 ? (
+                <DataTable
+                    lazy
+                    value={requests}
+                    dataKey="id"
+                    rowHover
+                    scrollable
+                >
+                    <Column field="id" header="ID" />
+                    <Column
+                        field="createdAt"
+                        header="CreatedAt"
+                        dataType="Date"
+                    />
+                    <Column field="subject" header="Subject" />
+                    <Column
+                        field="category"
+                        header="Category"
+                        body={categoryCell}
+                    />
+                    <Column field="author" header="Author" body={authorCell} />
+                    <Column
+                        field="requestedBy"
+                        header="Requested by"
+                        body={requestedByCell}
+                    />
+                </DataTable>
+            ) : (
+                <div>Loading...</div>
+            )}
+        </>
     );
 };
 
