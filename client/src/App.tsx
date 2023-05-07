@@ -1,6 +1,3 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import './App.css';
 import {
     Route,
@@ -13,6 +10,7 @@ import {
 import HomePage from './pages/HomePage';
 import AssetsPage from './pages/AssetsPage';
 import RequestsPage from './pages/RequestsPage';
+import LoginPage from './pages/LoginPage';
 import { Menu } from 'primereact/menu';
 import { MenuItem } from 'primereact/menuitem';
 
@@ -43,15 +41,22 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/assets" element={<AssetsPage />} />
                 <Route path="/requests" element={<RequestsPage />} />
+                <Route path="/login" element={<LoginPage />} />
             </Route>
         )
     );
 
     return (
-        <>
-            <Menu model={pages} />
-            <RouterProvider router={router} />
-        </>
+        <div className="flex">
+            <Menu
+                model={pages}
+                style={{ position: 'static', left: 0, height: '100%' }}
+                className="flex-1 h-auto"
+            />
+            <div className="flex-2 h-auto">
+                <RouterProvider router={router} />
+            </div>
+        </div>
     );
 }
 
