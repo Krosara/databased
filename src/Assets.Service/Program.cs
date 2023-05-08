@@ -11,7 +11,7 @@ builder.Services.AddMassTransit(x =>
     x.AddBus(provider =>
         Bus.Factory.CreateUsingRabbitMq(config =>
         {
-            config.Host(new Uri("rabbitmq://172.21.0.2"), h =>
+            config.Host(new Uri("rabbitmq://rabbitmq"), h =>
             {
                 h.Username("guest");
                 h.Password("guest");
