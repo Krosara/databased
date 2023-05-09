@@ -16,6 +16,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /App
 COPY --from=build-env /App/out .
 
+EXPOSE 27017
 EXPOSE 9001
 
 ENTRYPOINT [ "dotnet", "Assets.Service.dll" ]
