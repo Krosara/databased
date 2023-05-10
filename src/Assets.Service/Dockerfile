@@ -5,7 +5,6 @@ COPY ./Consumers ./
 COPY ./Controllers ./
 COPY ./Properties ./
 COPY ./Services ./
-COPY ./appsettings.sample.json ./appsettings.json
 COPY ./Program.cs ./
 COPY ./Assets.Service.csproj ./
 
@@ -15,4 +14,7 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /App
 COPY --from=build-env /App/out .
+
+EXPOSE 9001
+
 ENTRYPOINT [ "dotnet", "Assets.Service.dll" ]
