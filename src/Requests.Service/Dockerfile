@@ -4,7 +4,6 @@ WORKDIR /App
 COPY ./Controllers ./
 COPY ./Properties ./
 COPY ./Services ./
-COPY ./appsettings.json ./
 COPY ./Program.cs ./
 COPY ./Requests.Service.csproj ./
 
