@@ -36,6 +36,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddHealthChecks();
 
 builder.Services.Configure<DatabaseConfiguration>(builder.Configuration.GetSection("DatabaseConfiguration"));
 
@@ -47,6 +48,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -57,6 +59,8 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection();
+
+app.MapHealthChecks("/health");
 
 app.UseCors();
 
