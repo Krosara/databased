@@ -9,7 +9,7 @@ builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<AssetConsumer>();
     x.AddBus(provider =>
-        Bus.Factory.CreateUsingRabbitMq(config =>
+        Bus.Factory.CreateUsingAmazonSqs(config =>
         {
             config.Host(new Uri("rabbitmq://rabbitmq"), h =>
             {
