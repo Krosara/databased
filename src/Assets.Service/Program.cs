@@ -7,25 +7,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumer<HeartBeatConsumer>();
     x.AddConsumer<AssetConsumer>();
-    x.AddBus(provider =>
-        Bus.Factory.CreateUsingRabbitMq(config =>
+
+    x.UsingAmazonSqs((context, cfg) =>
+    {
+
+
+        cfg.Host("eu-north-1", h =>
         {
-            config.Host(new Uri("rabbitmq://localhost"), h =>
-            {
-                h.Username("guest");
-                h.Password("guest");
-            });
-            config.ReceiveEndpoint("requestsQueue", ep =>
-            {
-                ep.PrefetchCount = 16;
-                ep.UseMessageRetry(r => r.Interval(2, 200));
-                ep.ConfigureConsumer<AssetConsumer>(provider);
-            });
-        })
+            h.AccessKey(builder.Configuration.GetValue<string>("AmazonSQS:AccessKey"));
+            h.SecretKey(builder.Configuration.GetValue<string>("AmazonSQS:SecretKey"));
+        });
 
+        cfg.ConfigureEndpoints(context);
+
+    }
     );
-
 });
 
 builder.Services.AddCors(options =>
@@ -36,6 +34,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Logging.AddConsole();
+
+builder.Services.AddHealthChecks();
 
 builder.Services.Configure<DatabaseConfiguration>(builder.Configuration.GetSection("DatabaseConfiguration"));
 
@@ -47,6 +48,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -56,7 +58,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
+
+app.MapHealthChecks("/health");
 
 app.UseCors();
 

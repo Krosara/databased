@@ -27,23 +27,23 @@ builder.Services.AddOcelot();
 //     options.Authority = authority;
 //     options.Audience = audience;
 // });
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.Authority = authority;
-    options.Audience = audience;
-});
-
-// builder.Services.AddCors(options =>
+// builder.Services.AddAuthentication(options =>
 // {
-//     options.AddDefaultPolicy(policy =>
-//     {
-//         policy.WithOrigins("https://localhost:5173", "https://127.0.0.1:5173").SetIsOriginAllowed(allowed => true);
-//     });
+//     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+// }).AddJwtBearer(options =>
+// {
+//     options.Authority = authority;
+//     options.Audience = audience;
 // });
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("https://localhost:5173", "https://127.0.0.1:5173").AllowAnyHeader().AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -56,7 +56,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
+app.UseCors();
+
+// app.UseAuthentication();
 
 app.UseAuthorization();
 

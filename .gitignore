@@ -281,4 +281,6 @@ obj/
 /wwwroot/node_modules
 
 appsettings.*
+
+docker-compose.yml
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,aspnetcore
