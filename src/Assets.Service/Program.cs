@@ -7,25 +7,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumer<HeartBeatConsumer>();
     x.AddConsumer<AssetConsumer>();
-    x.AddBus(provider =>
-        Bus.Factory.CreateUsingRabbitMq(config =>
+
+    x.UsingAmazonSqs((context, cfg) =>
+    {
+
+
+        cfg.Host("eu-north-1", h =>
         {
-            config.Host(new Uri("rabbitmq://rabbitmq"), h =>
-            {
-                h.Username("guest");
-                h.Password("guest");
-            });
-            config.ReceiveEndpoint("requestsQueue", ep =>
-            {
-                ep.PrefetchCount = 16;
-                ep.UseMessageRetry(r => r.Interval(2, 200));
-                ep.ConfigureConsumer<AssetConsumer>(provider);
-            });
-        })
+            h.AccessKey(builder.Configuration.GetValue<string>("AmazonSQS:AccessKey"));
+            h.SecretKey(builder.Configuration.GetValue<string>("AmazonSQS:SecretKey"));
+        });
 
+        cfg.ConfigureEndpoints(context);
+
+    }
     );
-
 });
 
 builder.Services.AddCors(options =>
@@ -35,6 +33,8 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("https://localhost:5173", "https://127.0.0.1:5173", "http://localhost:5173", "http://127.0.0.1:5173").AllowAnyHeader().AllowAnyMethod();
     });
 });
+
+builder.Logging.AddConsole();
 
 builder.Services.AddHealthChecks();
 
