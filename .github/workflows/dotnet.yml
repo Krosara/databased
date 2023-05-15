@@ -179,16 +179,19 @@ jobs:
           aws-secret-access-key: $ {{ AWS_ECR_SECRET }}
           aws-region: eu-north-1
       -
-        name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-acr-login@v1
       -
-        name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          context: ./src/Assets.Service
-          file: ./src/Assets.Service/Dockerfile
-          push: true
-          tags: ${{ secrets.AWS_REGISTRY }}/databased-assets-service:latest
+        name: Build and push to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: databased-assets-service
+          IMAGE_TAG: latest
+        run: |
+          cd src/Assets.Service
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy-requests-service:
     name: Deploy Requests Microservice
