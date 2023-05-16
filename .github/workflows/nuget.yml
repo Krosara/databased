@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - ./src/Databased.Shared/**
+      - ./src/Databased.Shared
 
 
 jobs:
