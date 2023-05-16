@@ -4,10 +4,8 @@ on:
   push:
     branches: 
     - main
-    - develop
   pull_request:
     branches:
-    - main
     - develop
 
 jobs:
@@ -174,22 +172,26 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       -
-        name: Login to Docker Hub
-        uses: docker/login-action@v2
+        name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ECR_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ECR_SECRET }}
+          aws-region: eu-north-1
       -
-        name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
       -
-        name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          context: ./src/Assets.Service
-          file: ./src/Assets.Service/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/databased-assets-service:latest
+        name: Build and push to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: databased-assets-service
+          IMAGE_TAG: latest
+        run: |
+          cd src/Assets.Service
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy-requests-service:
     name: Deploy Requests Microservice
@@ -200,21 +202,25 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       -
-        name: Login to Docker Hub
-        uses: docker/login-action@v2
+        name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ECR_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ECR_SECRET }}
+          aws-region: eu-north-1
       -
-        name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
       -
-        name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          context: ./src/Requests.Service
-          file: ./src/Requests.Service/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/databased-requests-service:latest
+        name: Build and push to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: databased-requests-service
+          IMAGE_TAG: latest
+        run: |
+          cd src/Requests.Service
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       
       
