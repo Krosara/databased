@@ -8,24 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
+    x.UsingAmazonSqs((context, cfg) =>
     {
-        config.Host(new Uri("rabbitmq://localhost"), h =>
+        cfg.Host("eu-north-1", h =>
         {
-            h.Username("guest");
-            h.Password("guest");
+            h.AccessKey(builder.Configuration.GetValue<string>("AmazonSQS:AccessKey"));
+            h.SecretKey(builder.Configuration.GetValue<string>("AmazonSQS:SecretKey"));
         });
-    }));
+    }
+    );
 });
-
-builder.Services.Configure<DatabaseConfiguration>(builder.Configuration.GetSection("DatabaseConfiguration"));
-
-builder.Services.AddScoped<IRequestService, RequestService>();
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
@@ -34,6 +26,20 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("https://localhost:5173", "https://127.0.0.1:5173", "http://localhost:5173", "http://127.0.0.1:5173").AllowAnyHeader().AllowAnyMethod();
     });
 });
+
+builder.Services.AddHealthChecks();
+
+builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddHostedService<HeartBeatSender>();
+
+builder.Services.Configure<DatabaseConfiguration>(builder.Configuration.GetSection("DatabaseConfiguration"));
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
 
 var app = builder.Build();
 
