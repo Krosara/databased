@@ -39,6 +39,7 @@ jobs:
       run: cd src/Requests.Service; dotnet restore
     - name: Build
       run: cd src/Requests.Service; dotnet build --no-restore
+      
   build-api-gateway:
     name: Build API Gateway
     runs-on: ubuntu-latest
@@ -82,6 +83,21 @@ jobs:
       run: cd src/Requests.Service; dotnet restore
     - name: Test
       run: cd src/Requests.Service; dotnet test --verbosity normal
+      
+   test-api-gateway:
+    name: Test API Gateway
+    needs: build-api-gateway
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore dependencies
+      run: cd src/Api.Gateway; dotnet restore
+    - name: Test
+      run: cd src/Api.Gateway; dotnet test --verbosity normal
       
   sc-assets-service:
     name: SonarCloud Assets Microservice
@@ -166,6 +182,48 @@ jobs:
         .\.sonar\scanner\dotnet-sonarscanner begin /k:"databased_requests_service" /o:"krosara" /d:sonar.login="${{ secrets.SONAR_TOKEN_REQUESTS }}" /d:sonar.host.url="https://sonarcloud.io"
         dotnet build --no-incremental
         .sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN_REQUESTS }}"
+        
+ sc-api-gateway:
+    name: SonarCloud API Gateway
+    needs: test-api-gateway
+    runs-on: windows-latest
+    steps:
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: 11
+        distribution: 'zulu'
+    - uses: actions/checkout@v3
+      with: 
+        fetch-depth: 0
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v3
+      with:
+        path: ~\sonar\cache
+        key: ${{ runner.os }}-sonar
+    - name: Cache SonarCloud scanner
+      id: cache-sonar-scanner
+      uses: actions/cache@v3
+      with:
+        path: .\src\Api.Gateway\.sonar\scanner
+        key: ${{ runner.os }}-sonar-scanner
+        restore-keys: ${{ runner.os }}-sonar-scanner
+    - name: Install SonarCloud scanner
+      if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+      shell: powershell
+      run: |
+        cd src\Api.Gateway
+        New-Item -Path .sonar\scanner -ItemType Directory
+        dotnet tool update dotnet-sonarscanner --tool-path .sonar\scanner
+    - name: Analyze
+      env:
+        SONAR_TOKEN_API: ${{ secrets.SONAR_TOKEN_API }}
+      shell: powershell
+      run: |
+        cd src\Api.Gateway
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"databased_api" /o:"krosara" /d:sonar.login="${{ secrets.SONAR_TOKEN_API }}" /d:sonar.host.url="https://sonarcloud.io"
+        dotnet build --no-incremental
+        .sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN_API }}"
       
   deploy-assets-service:
     name: Deploy Assets Microservice
@@ -176,8 +234,14 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       -
-        name: Setup Docker Buildx
+        name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Build and push
         uses: docker/build-push-action@v4
@@ -197,8 +261,14 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       -
-        name: Setup Docker Buildx
+        name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Build and push
         uses: docker/build-push-action@v4
@@ -208,4 +278,29 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/databased-requests-service:latest
       
-      
+      deploy-api-gateway:
+        name: Deploy API Gateway
+        needs: sc-api-gateway
+        runs-on: ubuntu-latest
+        steps:
+          -
+            name: Checkout
+            uses: actions/checkout@v3
+          -
+            name: Set up DockerBuildx
+            uses: docker/setup-buildx-action@v2
+          -
+            name: Login to Docker Hub
+            uses: docker/login-action@v2
+            with:
+              username: ${{ secrets.DOCKERHUB_USERNAME }}
+              password: ${{ secrets.DOCKERHUB_PASSWORD }}
+              
+          -
+            name: Build and push
+            uses: docker/build-push-action@v4
+            with:
+              context: ./src/Api.Gateway
+              file: ./src/Api.Gateway/Dockerfile
+              push: true
+              tags: ${{ secrets.DOCKERHUB_USERNAME }}/databased-api-gateway:latest
