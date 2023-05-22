@@ -84,7 +84,7 @@ jobs:
     - name: Test
       run: cd src/Requests.Service; dotnet test --verbosity normal
       
-   test-api-gateway:
+  test-api-gateway:
     name: Test API Gateway
     needs: build-api-gateway
     runs-on: ubuntu-latest
@@ -183,7 +183,7 @@ jobs:
         dotnet build --no-incremental
         .sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN_REQUESTS }}"
         
- sc-api-gateway:
+  sc-api-gateway:
     name: SonarCloud API Gateway
     needs: test-api-gateway
     runs-on: windows-latest
@@ -278,7 +278,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/databased-requests-service:latest
       
-      deploy-api-gateway:
+  deploy-api-gateway:
         name: Deploy API Gateway
         needs: sc-api-gateway
         runs-on: ubuntu-latest
