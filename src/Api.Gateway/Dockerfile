@@ -3,7 +3,7 @@ WORKDIR /App
 
 COPY ./Properties ./
 COPY ./Program.cs ./
-COPY ./Assets.Service.csproj ./
+COPY ./Api.Gateway.csproj ./
 COPY ./ocelot.json ./
 
 RUN dotnet restore
