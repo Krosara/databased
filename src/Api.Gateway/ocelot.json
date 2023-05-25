@@ -2,7 +2,7 @@
     "Routes": [
         {
             "DownstreamPathTemplate": "/api/assets",
-            "DownstreamScheme": "https",
+            "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
                     "Host": "assets-service",
@@ -34,7 +34,7 @@
         },
         {
             "DownstreamPathTemplate": "/api/assets/{id}",
-            "DownstreamScheme": "https",
+            "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
                     "Host": "assets-service",
@@ -66,7 +66,7 @@
         },
         {
             "DownstreamPathTemplate": "/api/requests",
-            "DownstreamScheme": "https",
+            "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
                     "Host": "requests-service",
@@ -98,10 +98,10 @@
         },
         {
             "DownstreamPathTemplate": "/api/requests/{id}",
-            "DownstreamScheme": "https",
+            "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
-                    "Host": "requests-service",
+                    "Host": "assets-service",
                     "Port": "9002"
                 }
             ],
