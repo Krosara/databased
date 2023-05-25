@@ -2,10 +2,10 @@
     "Routes": [
         {
             "DownstreamPathTemplate": "/api/assets",
-            "DownstreamScheme": "http",
+            "DownstreamScheme": "https",
             "DownstreamHostAndPorts": [
                 {
-                    "Host": "localhost",
+                    "Host": "assets-service",
                     "Port": "9001"
                 }
             ],
@@ -34,10 +34,10 @@
         },
         {
             "DownstreamPathTemplate": "/api/assets/{id}",
-            "DownstreamScheme": "http",
+            "DownstreamScheme": "https",
             "DownstreamHostAndPorts": [
                 {
-                    "Host": "localhost",
+                    "Host": "assets-service",
                     "Port": "9001"
                 }
             ],
@@ -66,10 +66,10 @@
         },
         {
             "DownstreamPathTemplate": "/api/requests",
-            "DownstreamScheme": "http",
+            "DownstreamScheme": "https",
             "DownstreamHostAndPorts": [
                 {
-                    "Host": "localhost",
+                    "Host": "requests-service",
                     "Port": "9002"
                 }
             ],
@@ -98,10 +98,10 @@
         },
         {
             "DownstreamPathTemplate": "/api/requests/{id}",
-            "DownstreamScheme": "http",
+            "DownstreamScheme": "https",
             "DownstreamHostAndPorts": [
                 {
-                    "Host": "localhost",
+                    "Host": "requests-service",
                     "Port": "9002"
                 }
             ],
