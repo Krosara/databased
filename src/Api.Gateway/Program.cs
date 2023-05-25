@@ -1,11 +1,13 @@
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string authority = builder.Configuration["Auth0:Authority"]!;
-string audience = builder.Configuration["Auth0:Audience"]!;
+string authenticationProviderKey = builder.Configuration.GetValue<string>("Auth0:AuthenticationProviderKey")!;
+string authority = builder.Configuration.GetValue<string>("Auth0:Authority")!;
+string audience = builder.Configuration.GetValue<string>("Auth0:Audience")!;
 
 // Add services to the container.
 
@@ -18,24 +20,16 @@ builder.Services.AddSwaggerGen();
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 builder.Services.AddOcelot();
 
-// builder.Services.AddAuthentication(options =>
-// {
-//     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-// }).AddJwtBearer(options =>
-// {
-//     options.Authority = authority;
-//     options.Audience = audience;
-// });
-// builder.Services.AddAuthentication(options =>
-// {
-//     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-// }).AddJwtBearer(options =>
-// {
-//     options.Authority = authority;
-//     options.Audience = audience;
-// });
+//Auth
+System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+builder.Services.AddAuthentication().AddJwtBearer("Bearer", options =>
+{
+    options.Authority = authority;
+    options.Audience = audience;
+    options.RequireHttpsMetadata = false;
+});
+
 
 builder.Services.AddCors(options =>
 {
@@ -44,6 +38,10 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("https://localhost:5173", "https://127.0.0.1:5173").AllowAnyHeader().AllowAnyMethod();
     });
 });
+
+builder.Logging.AddConsole();
+
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -56,9 +54,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapHealthChecks("/health");
+
 app.UseCors();
 
-// app.UseAuthentication();
+app.UseAuthentication();
 
 app.UseAuthorization();
 

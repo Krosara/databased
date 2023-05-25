@@ -16,7 +16,6 @@
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Databased.Shared" Version="1.0.2"/>
-    <!-- <ProjectReferemce Include="../Databased.Shared/Database.Shared.csproj" /> -->
   </ItemGroup>
 
 </Project>
