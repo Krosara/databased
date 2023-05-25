@@ -2,6 +2,8 @@ using MassTransit;
 using Assets.Service;
 using Assets.Service.Consumers;
 using Databased.Shared.Configurations;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,7 +66,9 @@ app.MapHealthChecks("/health");
 
 app.UseCors();
 
-app.UseAuthorization();
+// app.UseAuthentication();
+
+// app.UseAuthorization();
 
 app.MapControllers();
 

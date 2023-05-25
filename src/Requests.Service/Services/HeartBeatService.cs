@@ -1,4 +1,3 @@
-
 using Databased.Shared.Models;
 using MassTransit;
 
