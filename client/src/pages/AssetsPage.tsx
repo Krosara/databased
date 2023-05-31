@@ -6,25 +6,41 @@ import { Button } from 'primereact/button';
 import { getStatus } from '../helpers/GetAssetStatusHelper';
 import { AssetModal } from '../components/AssetModal/AssetModal';
 import { Asset } from '../types/AssetType';
+import { useAuth0 } from '@auth0/auth0-react';
+import { Auth0Client, createAuth0Client } from '@auth0/auth0-spa-js';
 
 const AssetsPage = () => {
     const [assets, setAssets] = useState<Asset[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [selected, setSelected] = useState<Asset | undefined>();
 
+    const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
+
     //modal
     const [visible, setVisible] = useState<boolean>(false);
 
     const getAssets = async (): Promise<any> => {
-        setLoading(true);
+        try {
+            setLoading(true);
 
-        const response = await axios.get('/gateway/assets');
-        if (response.status === 200) {
-            const data = await response.data;
-            setAssets(data);
+            const accessToken = await getAccessTokenSilently();
+
+            const response = await axios.get('/gateway/assets', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.status === 200) {
+                const data = await response.data;
+                setAssets(data);
+            }
+
+            setLoading(false);
+        } catch (error: any) {
+            if (error.error === 'login_required') {
+                loginWithRedirect();
+            }
         }
-
-        setLoading(false);
     };
 
     useEffect(() => {

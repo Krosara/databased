@@ -5,20 +5,37 @@ import { Request, RequestCategory } from '../types/RequestType';
 import axios from 'axios';
 import { Button } from 'primereact/button';
 import { RequestModal } from '../components/RequestModal/RequestModal';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const RequestsPage = () => {
     const [requests, setRequests] = useState<Array<Request>>([]);
     const [loading, setLoading] = useState<boolean>(false);
-
     const [visible, setVisible] = useState<boolean>(false);
+    const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
 
     const getRequests = async (): Promise<any> => {
-        setLoading(true);
+        try {
+            setLoading(true);
 
-        const response = await axios.get('/gateway/requests');
-        if (response.status === 200) {
-            const data = await response.data;
-            setRequests(data);
+            const accessToken = await getAccessTokenSilently();
+
+            const response = await axios.get('/gateway/requests', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.status === 200) {
+                const data = await response.data;
+                setRequests(data);
+            }
+        } catch (error: any) {
+            if (error.error === 'login_required') {
+                loginWithRedirect({
+                    authorizationParams: {
+                        redirect_uri: window.location.origin,
+                    },
+                });
+            }
         }
     };
 
