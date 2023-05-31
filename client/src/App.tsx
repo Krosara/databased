@@ -13,9 +13,12 @@ import RequestsPage from './pages/RequestsPage';
 import LoginPage from './pages/LoginPage';
 import { Menu } from 'primereact/menu';
 import { MenuItem } from 'primereact/menuitem';
+import { Button } from 'primereact/button';
+import { useAuth0 } from '@auth0/auth0-react';
+// import { AuthenticatedRoute } from './components/AuthenticatedRoute/AuthenticatedRoute';
 
 function App() {
-    // const navigate = useNavigate();
+    const { isAuthenticated, logout, loginWithRedirect } = useAuth0();
 
     let pages: MenuItem[] = [
         {
@@ -39,22 +42,40 @@ function App() {
         createRoutesFromElements(
             <Route>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/assets" element={<AssetsPage />} />
-                <Route path="/requests" element={<RequestsPage />} />
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/assets" element={<AssetsPage />} />
+
+                <Route path="/requests" element={<RequestsPage />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
         )
     );
 
     return (
-        <div className="flex">
-            <Menu
-                model={pages}
-                style={{ position: 'static', left: 0, height: '100%' }}
-                className="flex-1 h-auto"
-            />
-            <div className="flex-2 h-auto">
-                <RouterProvider router={router} />
+        <div>
+            <div className="app-topbar">
+                {isAuthenticated ? (
+                    <Button
+                        label="Logout"
+                        onClick={() =>
+                            logout({
+                                logoutParams: {
+                                    return: window.location.origin,
+                                },
+                            })
+                        }
+                    />
+                ) : (
+                    <Button label="Login" onClick={() => loginWithRedirect()} />
+                )}
+            </div>
+            <div className="app-container">
+                <div className="app-menu">
+                    <Menu model={pages} className="w-auto" />
+                </div>
+                <div className="app-content">
+                    <RouterProvider router={router} />
+                </div>
             </div>
         </div>
     );

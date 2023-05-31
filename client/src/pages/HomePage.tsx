@@ -3,11 +3,21 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Request, RequestCategory } from '../types/RequestType';
 import axios from 'axios';
-
-axios.defaults.baseURL = 'https://127.0.0.1:9001';
+import { useAuth0 } from '@auth0/auth0-react';
+import { Button } from 'primereact/button';
+import { Auth0Client } from '@auth0/auth0-spa-js';
 
 const HomePage = () => {
-    return <div>Home Page</div>;
+    const {
+        isAuthenticated,
+        user,
+        logout,
+        loginWithRedirect,
+        getIdTokenClaims,
+        getAccessTokenSilently,
+    } = useAuth0();
+
+    return <></>;
 };
 
 export default HomePage;
