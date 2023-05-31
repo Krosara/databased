@@ -8,14 +8,7 @@ import { Button } from 'primereact/button';
 import { Auth0Client } from '@auth0/auth0-spa-js';
 
 const HomePage = () => {
-    const {
-        isAuthenticated,
-        user,
-        logout,
-        loginWithRedirect,
-        getIdTokenClaims,
-        getAccessTokenSilently,
-    } = useAuth0();
+    const {} = useAuth0();
 
     return <></>;
 };
