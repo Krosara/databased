@@ -14,9 +14,9 @@
             "RateLimitOptions": {
                 "ClientWhitelist": [],
                 "EnableRateLimiting": true,
-                "Period": "5s",
+                "Period": "1s",
                 "PeriodTimespan": 1,
-                "Limit": 10,
+                "Limit": 10000,
                 "HttpStatusCode": 429
             },
             "FileCacheOptions": {
@@ -42,13 +42,13 @@
                 }
             ],
             "UpstreamPathTemplate": "/gateway/assets/{id}",
-            "UpstreamHttpMethod": ["GET", "DELETE"],
+            "UpstreamHttpMethod": ["GET", "DELETE", "PUT"],
             "RateLimitOptions": {
                 "ClientWhitelist": [],
                 "EnableRateLimiting": true,
-                "Period": "5s",
+                "Period": "1s",
                 "PeriodTimespan": 1,
-                "Limit": 3,
+                "Limit": 10000,
                 "HttpStatusCode": 429
             },
             "FileCacheOptions": {
@@ -78,9 +78,9 @@
             "RateLimitOptions": {
                 "ClientWhitelist": [],
                 "EnableRateLimiting": true,
-                "Period": "5s",
+                "Period": "1s",
                 "PeriodTimespan": 1,
-                "Limit": 3,
+                "Limit": 10000,
                 "HttpStatusCode": 429
             },
             "FileCacheOptions": {
@@ -110,9 +110,9 @@
             "RateLimitOptions": {
                 "ClientWhitelist": [],
                 "EnableRateLimiting": true,
-                "Period": "5s",
+                "Period": "1s",
                 "PeriodTimespan": 1,
-                "Limit": 3,
+                "Limit": 10000,
                 "HttpStatusCode": 429
             },
             "FileCacheOptions": {
