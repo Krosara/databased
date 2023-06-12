@@ -23,7 +23,7 @@ public class HeartBeatSender : BackgroundService
             var heartBeat = new HeartBeat();
             await messageBus.Publish(new HeartBeat(), cancellationToken);
             this.logger.LogInformation("Sent heartbeat {Timestamp}", heartBeat.Timestamp);
-            await Task.Delay(TimeSpan.FromSeconds(1800), cancellationToken);
+            await Task.Delay(TimeSpan.FromDays(1), cancellationToken);
 
         }
     }
