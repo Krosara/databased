@@ -15,6 +15,7 @@ import { Menu } from 'primereact/menu';
 import { MenuItem } from 'primereact/menuitem';
 import { Button } from 'primereact/button';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useState } from 'react';
 // import { AuthenticatedRoute } from './components/AuthenticatedRoute/AuthenticatedRoute';
 
 function App() {
@@ -28,12 +29,12 @@ function App() {
         },
         {
             label: 'Assets',
-            icon: 'pi pi-fw pi-trash',
+            icon: 'pi pi-fw pi-desktop',
             command: (e) => (window.location.pathname = '/assets'),
         },
         {
             label: 'Requests',
-            icon: 'pi pi-fw pi-trash',
+            icon: 'pi pi-fw pi-phone',
             command: (e) => (window.location.pathname = '/requests'),
         },
     ];
@@ -53,9 +54,10 @@ function App() {
 
     return (
         <div>
-            <div className="app-topbar">
+            <div className="app-topbar sticky">
                 {isAuthenticated ? (
                     <Button
+                        className=""
                         label="Logout"
                         onClick={() =>
                             logout({
@@ -71,7 +73,7 @@ function App() {
             </div>
             <div className="app-container">
                 <div className="app-menu">
-                    <Menu model={pages} className="w-auto" />
+                    <Menu model={pages} className="w-auto h-full " />
                 </div>
                 <div className="app-content">
                     <RouterProvider router={router} />
