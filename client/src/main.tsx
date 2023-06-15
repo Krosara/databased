@@ -10,6 +10,7 @@ import axios from 'axios';
 import { Auth0Provider } from '@auth0/auth0-react';
 
 axios.defaults.baseURL = import.meta.env.VITE_API_GATEWAY;
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
