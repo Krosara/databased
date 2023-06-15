@@ -38,7 +38,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.SetIsOriginAllowedToAllowWildcardSubdomains().WithOrigins("https://localhost:5173", "https://127.0.0.1:5173", "https://*.vercel.app").AllowAnyHeader().AllowAnyMethod();
+        policy.SetIsOriginAllowedToAllowWildcardSubdomains().WithOrigins("https://localhost:5173", "https://127.0.0.1:5173", "https://*.vercel.app", "https://databased-pi.vercel.app").AllowAnyHeader().AllowAnyMethod();
     });
 });
 
