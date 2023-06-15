@@ -4,6 +4,11 @@ import basicSsl from '@vitejs/plugin-basic-ssl';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    server: { https: true },
+    server: {
+        https: true,
+        hmr: {
+            protocol: 'wss',
+        },
+    },
     plugins: [react(), basicSsl()],
 });
