@@ -12,6 +12,8 @@ string audience = builder.Configuration.GetValue<string>("Auth0:Audience")!;
 
 // Add services to the container.
 
+builder.Services.AddHealthChecks();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -42,8 +44,6 @@ builder.Services.AddCors(options =>
 
 builder.Logging.AddConsole();
 
-builder.Services.AddHealthChecks();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -65,6 +65,21 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseOcelot().Wait();
+var conf = new OcelotPipelineConfiguration()
+{
+    PreErrorResponderMiddleware = async (ctx, next) =>
+    {
+        if (ctx.Request.Path.Equals(new PathString("/health")))
+        {
+            await ctx.Response.WriteAsync("ok");
+        }
+        else
+        {
+            await next.Invoke();
+        }
+    }
+};
+
+app.UseOcelot(conf).Wait();
 
 app.Run();
