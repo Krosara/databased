@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { DataTable, DataTableSelectionChangeEvent } from 'primereact/datatable';
+import {
+    DataTable,
+    DataTableSelectionChangeEvent,
+    DataTableSortMeta,
+} from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import axios from 'axios';
 import { Button } from 'primereact/button';
@@ -7,17 +11,35 @@ import { getStatus } from '../helpers/GetAssetStatusHelper';
 import { AssetModal } from '../components/AssetModal/AssetModal';
 import { Asset } from '../types/AssetType';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Auth0Client, createAuth0Client } from '@auth0/auth0-spa-js';
+import { Paginator } from 'primereact/paginator';
+import { AssetDetails } from '../components/AssetDetails/AssetDetails';
 
 const AssetsPage = () => {
     const [assets, setAssets] = useState<Asset[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [selected, setSelected] = useState<Asset | undefined>();
 
+    const [first, setFirst] = useState<number>(0);
+    const [rows, setRows] = useState<number>(10);
+    const [sortField, setSortField] = useState<string>('');
+    const [sortOrder, setSortOrder] = useState<0 | 1 | -1 | null | undefined>(
+        1
+    );
+    const [sortMeta, setSortMeta] = useState<
+        DataTableSortMeta[] | null | undefined
+    >([]);
+
     const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
 
     //modal
     const [visible, setVisible] = useState<boolean>(false);
+
+    const totalPages = Math.ceil(assets.length / rows);
+
+    const onPageChange = (e: { first: number; rows: number }) => {
+        setFirst(e.first);
+        setRows(e.rows);
+    };
 
     const getAssets = async (): Promise<any> => {
         try {
@@ -56,7 +78,12 @@ const AssetsPage = () => {
         getAssets();
     };
 
-    const onAssetSelect = () => {};
+    // const onSort = (e: any) => {
+    //     setSortField(e.multiSortMeta[0].field);
+    //     console.log(e.multiSortMeta[0].field);
+    //     console.log(sortField);
+    //     setSortOrder(e.multiSortMeta[0].order);
+    // };
 
     return (
         <div className="flex">
@@ -69,41 +96,71 @@ const AssetsPage = () => {
                 />
 
                 {assets.length > 0 ? (
-                    <DataTable
-                        lazy
-                        value={assets}
-                        dataKey="id"
-                        rowHover
-                        scrollable
-                        selectionMode="single"
-                        selection={selected}
-                        onSelectionChange={(e: any) => {
-                            setSelected(e.value);
-                        }}
-                    >
-                        <Column field="id" header="ID" />
-                        <Column
-                            field="createdAt"
-                            header="CreatedAt"
-                            dataType="Date"
+                    <div>
+                        <DataTable
+                            value={assets.slice(first, first + rows)}
+                            dataKey="id"
+                            rowHover
+                            stripedRows
+                            scrollable
+                            selectionMode="single"
+                            selection={selected}
+                            onSelectionChange={(e: any) => {
+                                setSelected(e.value);
+                            }}
+                            onPage={(e) => setFirst(e.first)}
+                            emptyMessage="No assets found."
+                            sortOrder={sortOrder}
+                            sortField={sortField}
+                            onSort={(e) => {
+                                setSortField(e.sortField);
+                                setSortOrder(e.sortOrder);
+                                // console.log(e);
+                            }}
+                            // sortMode="multiple"
+                            multiSortMeta={sortMeta}
+                            removableSort
+                        >
+                            <Column field="id" header="ID" sortable />
+                            <Column field="label" header="Label" sortable />
+                            <Column field="name" header="Name" sortable />
+                            <Column
+                                field="status"
+                                header="Status"
+                                body={statusCell}
+                                // sortable
+                            />
+                            <Column
+                                field="isSoftware"
+                                header="Is Software"
+                                sortable
+                            />
+                        </DataTable>
+                        <Paginator
+                            first={first}
+                            rows={10}
+                            totalRecords={assets.length}
+                            onPageChange={onPageChange}
+                            template={{
+                                layout: 'PrevPageLink CurrentPageReport NextPageLink',
+                            }}
+                            className="p-paginator-custom"
                         />
-                        <Column field="label" header="Label" />
-                        <Column
-                            field="status"
-                            header="Status"
-                            body={statusCell}
-                        />
-                        <Column field="isSoftware" header="Is Software" />
-                    </DataTable>
+                    </div>
                 ) : (
                     <div>Loading...</div>
                 )}
             </div>
             <div className="flex 1 w-1/3">
                 {selected ? (
-                    <h2>
-                        {selected.label} - {selected.name}
-                    </h2>
+                    <div>
+                        <AssetDetails
+                            label={selected.label}
+                            name={selected.name}
+                            isSoftware={selected.isSoftware}
+                            status={selected.status}
+                        />
+                    </div>
                 ) : (
                     <div>Select one</div>
                 )}

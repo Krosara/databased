@@ -8,9 +8,13 @@ import {
     RequestStatus,
 } from '../../types/RequestType';
 import { Checkbox } from 'primereact/checkbox';
+import { MultiSelect } from 'primereact/multiselect';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import * as Yup from 'yup';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useState } from 'react';
+import { Asset } from '../../types/AssetType';
 
 const Schema = Yup.object().shape({
     label: Yup.string().required('Label is required'),
@@ -21,12 +25,47 @@ const initialValues: Request = {
     subject: '',
     category: RequestCategory['RFC'],
     status: RequestStatus['On Backlog'],
+    assets: [],
 };
 
 const RequestModal = (props: any) => {
-    const createRequest = (request: Request) => {
-        var response = axios.post('/gateway/requests', request);
-        console.log(response);
+    const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
+    const [assets, setAssets] = useState<Asset[]>([]);
+
+    const createRequest = async (request: Request) => {
+        try {
+            const accessToken = await getAccessTokenSilently();
+
+            const response = await axios.post('/gateway/requests', request, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+        } catch (error: any) {
+            if (error.error === 'login_required') {
+                loginWithRedirect();
+            }
+        }
+    };
+
+    const getAssets = async (): Promise<any> => {
+        try {
+            const accessToken = await getAccessTokenSilently();
+
+            const response = await axios.get('/gateway/assets', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.status === 200) {
+                const data = await response.data;
+                setAssets(data);
+            }
+        } catch (error: any) {
+            if (error.error === 'login_required') {
+                loginWithRedirect();
+            }
+        }
     };
 
     const handleSubmit = (newRequest: Request, { resetForm }: any) => {
@@ -98,6 +137,16 @@ const RequestModal = (props: any) => {
                                     );
                                 }}
                                 className="mb-3"
+                            />
+                        </div>
+                        <div>
+                            <MultiSelect
+                                value={assets}
+                                display="chip"
+                                optionLabel="label"
+                                onChange={(e) =>
+                                    setFieldValue('assets', e.value)
+                                }
                             />
                         </div>
 
