@@ -54,7 +54,7 @@ function App() {
 
     return (
         <div>
-            <div className="app-topbar sticky">
+            <div className="app-topbar sticky ">
                 {isAuthenticated ? (
                     <Button
                         className=""
