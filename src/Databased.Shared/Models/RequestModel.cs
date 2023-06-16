@@ -14,7 +14,7 @@ public class Request : Document
     public Team? Team { get; set; }
     public List<Comment> Comments { get; set; } = new List<Comment>();
     public List<AssetRef> Assets { get; set; } = new List<AssetRef>();
-    public DateTimeOffset CompletedAt { get; set; }
+    public DateTimeOffset? CompletedAt { get; set; }
     public StatusRequest Status { get; set; }
 
 }

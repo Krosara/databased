@@ -1,10 +1,11 @@
 namespace Databased.Shared.Enums;
 
-public enum StatusRequest {
+public enum StatusRequest
+{
     Declined,
     OnBacklog,
     Assigned,
     Accepted,
-    InProgres,
+    InProgress,
     Completed
 }
