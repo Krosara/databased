@@ -18,8 +18,8 @@ export type Request = {
     status: RequestStatus;
 };
 
-type Comment = {
-    id: string;
+export type Comment = {
+    id?: string;
     createdAt: Date;
     updatedAt: Date;
     content: string;
