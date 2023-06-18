@@ -179,7 +179,7 @@ const RequestsPage = () => {
         <div className="flex h-full">
             <div className="flex flex-none w-9" id="requestsTable">
                 <RequestModal visible={visible} onHide={handleModalClose} />
-                <div>
+                <div className="w-full">
                     <DataTable
                         value={requests}
                         loading={loading}
