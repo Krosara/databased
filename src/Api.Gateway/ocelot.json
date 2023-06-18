@@ -123,14 +123,10 @@
                 "AuthenticationProviderKey": "Bearer",
                 "AllowedScopes": []
             },
-            "AuthenticationProviderKey": "Bearer",
             "RouteClaimsRequirement": {
-                "permissions": "read-write:databased"
+                "permissions": ["readwrite:databased", "read:assets"]
             },
-            "AddHeadersToRequest": {
-                "UserType": "Claims[sub] > value[0] > |",
-                "UserId": "Claims[sub] > value[1] > |"
-            }
+            "AuthenticationProviderKey": "Bearer"
         }
     ]
 }
