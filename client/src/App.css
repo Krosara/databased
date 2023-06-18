@@ -2,18 +2,21 @@
     text-align: center;
     width: 100%;
     height: 100%;
+    height: 100vh;
 }
 
 .app-container {
     display: flex;
-    height: 100%;
     width: 100vw;
+    /* height: 100%; */
 }
 
 .app-topbar {
     height: 3%;
     background-color: yellowgreen;
     padding: 2px;
+    z-index: 999;
+    top: 0;
 }
 
 .app-menu {

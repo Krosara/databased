@@ -7,30 +7,62 @@ import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import * as Yup from 'yup';
 import { Asset, AssetStatus } from '../../types/AssetType';
+import { useEffect, useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const Schema = Yup.object().shape({
     label: Yup.string().required('Label is required'),
     name: Yup.string().required('Name is required'),
 });
 
-const initialValues: Asset = {
-    label: '',
-    name: '',
-    isSoftware: false,
-    status: AssetStatus['In Production'],
-};
-
 const AssetDetails = (props: any) => {
-    const createAsset = (asset: Asset) => {
-        var response = axios.post('/gateway/assets', asset);
-        console.log(response);
+    const [loading, setLoading] = useState(false);
+    const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
+
+    const updateAsset = async (asset: Asset) => {
+        try {
+            setLoading(true);
+            const accessToken = await getAccessTokenSilently();
+
+            const response = await axios.put(
+                `/gateway/assets/${asset.id}`,
+                asset,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+
+            if (response.status === 204) {
+                setLoading(false);
+                props.onSuccess;
+
+                console.log('successfully updated asset');
+            }
+        } catch (error: any) {
+            console.log("Couldn't create asset");
+            if (error.error === 'login_required') {
+                loginWithRedirect();
+            }
+            setLoading(false);
+        }
+    };
+
+    const initialValues: Asset = {
+        id: props.id,
+        label: props.label,
+        name: props.name,
+        isSoftware: props.isSoftware,
+        status: props.status,
     };
 
     const handleSubmit = (newAsset: Asset, { resetForm }: any) => {
         try {
             console.log(newAsset);
-            createAsset(newAsset);
+            updateAsset(newAsset);
             resetForm();
+            () => props.onSuccess;
         } catch {
             console.log("Couldn't create asset");
         }
@@ -41,13 +73,14 @@ const AssetDetails = (props: any) => {
             initialValues={initialValues}
             onSubmit={handleSubmit}
             validationSchema={Schema}
+            enableReinitialize
         >
             {({ isSubmitting, values, setFieldValue }) => (
                 <Form>
                     <div>
                         <label
                             htmlFor="label"
-                            className="block text-900 font-medium mb-2"
+                            className="block text-900 font-medium mb-2 text-white"
                         >
                             Label
                         </label>
@@ -58,7 +91,6 @@ const AssetDetails = (props: any) => {
                             name="label"
                             placeholder="Label"
                             className="w-full mb-1"
-                            value={props.label}
                         />
                         <ErrorMessage
                             name="label"
@@ -69,7 +101,7 @@ const AssetDetails = (props: any) => {
                     <div className="mb-3">
                         <label
                             htmlFor="name"
-                            className="block text-900 font-medium mb-1 mt-3"
+                            className="block text-900 font-medium mb-1 mt-3 text-white"
                         >
                             Name
                         </label>
@@ -80,7 +112,6 @@ const AssetDetails = (props: any) => {
                             name="name"
                             placeholder="Name"
                             className="w-full mb-1"
-                            value={props.name}
                         />
                         <ErrorMessage
                             name="name"
@@ -91,6 +122,7 @@ const AssetDetails = (props: any) => {
 
                     <div className="flex align-items-center mb-3">
                         <Checkbox
+                            id="isSoftware"
                             inputId="isSoftware"
                             name="isSoftware"
                             onChange={(e) => {
@@ -105,14 +137,14 @@ const AssetDetails = (props: any) => {
                     <div>
                         <label
                             htmlFor="status"
-                            className="block text-900 font-medium mb-2"
+                            className="block text-900 font-medium mb-2 text-white"
                         >
                             Status
                         </label>
                         <Dropdown
                             id="status"
                             name="status"
-                            value={AssetStatus[props.status]}
+                            value={AssetStatus[values.status]}
                             options={Object.values(AssetStatus).filter((s) =>
                                 isNaN(Number(s))
                             )}
@@ -120,16 +152,16 @@ const AssetDetails = (props: any) => {
                             onChange={(e) => {
                                 setFieldValue('status', AssetStatus[e.value]);
                             }}
-                            className="mb-3"
+                            className="mb-3 w-full"
                         />
                     </div>
 
                     <Button
                         type="submit"
-                        label="Ok"
-                        icon="pi pi-user"
+                        label="Update"
                         className="w-full"
                         disabled={isSubmitting}
+                        loading={loading}
                     />
                 </Form>
             )}

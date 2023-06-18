@@ -17,4 +17,14 @@ const getStatus = (status: number) => {
     }
 };
 
-export { getStatus };
+const getStatuses = () => {
+    var statuses = [];
+    for (const s in AssetStatus) {
+        if (isNaN(Number(s))) {
+            statuses.push(s);
+        }
+    }
+    return statuses;
+};
+
+export { getStatus, getStatuses };
