@@ -284,3 +284,8 @@ appsettings.*
 
 docker-compose.yml
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,aspnetcore
+src/Api.Gateway/ocelot.json
+cert/ca-cert.cert
+cert/ca-key.key
+kubernetes/manifest.yaml
+key.pem
