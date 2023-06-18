@@ -101,7 +101,7 @@
             "DownstreamScheme": "http",
             "DownstreamHostAndPorts": [
                 {
-                    "Host": "assets-service",
+                    "Host": "requests-service",
                     "Port": "9002"
                 }
             ],
@@ -110,14 +110,10 @@
             "RateLimitOptions": {
                 "ClientWhitelist": [],
                 "EnableRateLimiting": true,
-                "Period": "1s",
+                "Period": "5s",
                 "PeriodTimespan": 1,
-                "Limit": 10000,
+                "Limit": 3,
                 "HttpStatusCode": 429
-            },
-            "FileCacheOptions": {
-                "TtlSeconds": 30,
-                "Region": "requestcache"
             },
             "AuthenticationOptions": {
                 "AuthenticationProviderKey": "Bearer",
