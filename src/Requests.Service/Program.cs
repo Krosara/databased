@@ -56,7 +56,7 @@ app.UseHealthChecks("/health");
 
 app.UseCors();
 
-app.UseAuthorization();
+// app.UseAuthorization();
 
 app.MapControllers();
 
