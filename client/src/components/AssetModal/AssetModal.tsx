@@ -8,6 +8,7 @@ import { Dropdown } from 'primereact/dropdown';
 import * as Yup from 'yup';
 import { Asset, AssetStatus } from '../../types/AssetType';
 import { useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 
 const Schema = Yup.object().shape({
     label: Yup.string().required('Label is required'),
@@ -22,27 +23,45 @@ const initialValues: Asset = {
 };
 
 const AssetModal = (props: any) => {
-    const [visible, setVisible] = useState(props.visible);
+    const [visible, setVisible] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const { getAccessTokenSilently, loginWithRedirect } = useAuth0();
 
     const createAsset = (asset: Asset) => {
         var response = axios.post('/gateway/assets', asset);
         console.log(response);
     };
 
-    const handleSubmit = (newAsset: Asset, { resetForm }: any) => {
+    const handleSubmit = async (newAsset: Asset, { resetForm }: any) => {
         try {
-            console.log(newAsset);
-            createAsset(newAsset);
-            resetForm();
-        } catch {
+            setLoading(true);
+
+            const accessToken = await getAccessTokenSilently();
+
+            const response = await axios.post('/gateway/assets', newAsset, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (response.status === 201) {
+                resetForm();
+                setLoading(false);
+                setVisible(false);
+            }
+        } catch (error: any) {
             console.log("Couldn't create asset");
+            if (error.error === 'login_required') {
+                loginWithRedirect();
+            }
+            setLoading(false);
         }
     };
 
     return (
         <Dialog
             header="New asset"
-            visible={props.visible}
+            visible={props.visible && visible}
             onHide={props.onHide}
             style={{ width: '50vw' }}
             draggable={false}

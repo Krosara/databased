@@ -5,8 +5,8 @@ export type User = {
 };
 
 export type UserRef = {
-    id: string;
-    name: string;
+    id: string | null;
+    name: string | undefined;
 };
 
 export enum UserRole {

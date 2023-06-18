@@ -19,7 +19,7 @@ import { useState } from 'react';
 // import { AuthenticatedRoute } from './components/AuthenticatedRoute/AuthenticatedRoute';
 
 function App() {
-    const { isAuthenticated, logout, loginWithRedirect } = useAuth0();
+    const { isAuthenticated, logout, loginWithRedirect, user } = useAuth0();
 
     let pages: MenuItem[] = [
         {
@@ -53,29 +53,40 @@ function App() {
     );
 
     return (
-        <div>
-            <div className="app-topbar sticky ">
+        <div className="relative flex flex-column h-full">
+            <div className="flex flex-row h-2 bg-primary sticky w-full align-items-center justify-content-end px-4">
                 {isAuthenticated ? (
-                    <Button
-                        className=""
-                        label="Logout"
-                        onClick={() =>
-                            logout({
-                                logoutParams: {
-                                    return: window.location.origin,
-                                },
-                            })
-                        }
-                    />
+                    <>
+                        <p>
+                            Hello, <b>{user?.nickname}</b>
+                        </p>
+                        <Button
+                            size="small"
+                            className="flex bg-primary-reverse ml-4"
+                            label="Logout"
+                            onClick={() =>
+                                logout({
+                                    logoutParams: {
+                                        return: window.location.origin,
+                                    },
+                                })
+                            }
+                        />
+                    </>
                 ) : (
-                    <Button label="Login" onClick={() => loginWithRedirect()} />
+                    <Button
+                        size="small"
+                        label="Login"
+                        className="bg-primary-reverse"
+                        onClick={() => loginWithRedirect()}
+                    />
                 )}
             </div>
-            <div className="app-container">
-                <div className="app-menu">
-                    <Menu model={pages} className="w-auto h-full " />
+            <div className="flex h-full">
+                <div className="inline-block w-1">
+                    <Menu model={pages} className="w-auto h-full" />
                 </div>
-                <div className="app-content">
+                <div className="inline-block h-full w-full">
                     <RouterProvider router={router} />
                 </div>
             </div>
