@@ -106,7 +106,7 @@
                 }
             ],
             "UpstreamPathTemplate": "/gateway/requests/{id}",
-            "UpstreamHttpMethod": ["GET", "DELETE"],
+            "UpstreamHttpMethod": ["GET", "DELETE", "PUT"],
             "RateLimitOptions": {
                 "ClientWhitelist": [],
                 "EnableRateLimiting": true,
