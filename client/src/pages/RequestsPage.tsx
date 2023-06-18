@@ -102,6 +102,10 @@ const RequestsPage = () => {
     const requestedByCell = (data: Request) => {
         return <div>{data.requestedBy?.name}</div>;
     };
+    const requestedAtCell = (data: Request) => {
+        var date = new Date(data.createdAt!);
+        return <div>{date.toLocaleString()}</div>;
+    };
     const clearFilter = () => {
         initFilters();
     };
@@ -148,6 +152,13 @@ const RequestsPage = () => {
                     outlined
                     onClick={clearFilter}
                 />
+                <Button
+                    type="button"
+                    icon="pi pi-refresh"
+                    label="Refresh"
+                    outlined
+                    onClick={() => getRequests()}
+                />
                 <Button label="Make request" onClick={() => setVisible(true)} />
 
                 <span className="p-input-icon-left">
@@ -166,7 +177,7 @@ const RequestsPage = () => {
 
     return (
         <div className="flex h-full">
-            <div className="flex flex-none" id="requestsTable">
+            <div className="flex flex-none w-9" id="requestsTable">
                 <RequestModal visible={visible} onHide={handleModalClose} />
                 <div>
                     <DataTable
@@ -181,6 +192,7 @@ const RequestsPage = () => {
                         selection={selected}
                         onSelectionChange={(e: any) => {
                             setSelected(e.value);
+                            console.log(typeof e.value.createdAt);
                         }}
                         emptyMessage="No requests found."
                         sortOrder={sortOrder}
@@ -203,7 +215,14 @@ const RequestsPage = () => {
                             header="Requested by"
                             body={requestedByCell}
                         />
-                        <Column field="subject" header="Subject" sortable />
+                        <Column
+                            field="requestedAt"
+                            header="Requested At"
+                            body={requestedAtCell}
+                            dataType="date"
+                            sortable
+                        />
+                        <Column field="subject" header="Subject" />
                         <Column
                             field="category"
                             header="Category"
@@ -217,14 +236,14 @@ const RequestsPage = () => {
                 {selected ? (
                     <div className="w-full">
                         <RequestDetails
+                            id={selected.id}
                             subject={selected.subject}
-                            requestedBy={selected.requestedBy}
+                            comments={selected.comments}
+                            assets={selected.assets}
                             category={selected.category}
                             status={selected.status}
-                            id={selected.id}
-                            assets={selected.assets}
-                            comments={selected.comments}
-                            onSuccess={() => forceUpdate()}
+                            requestedBy={selected.requestedBy}
+                            onSuccess={() => getRequests()}
                         />
                     </div>
                 ) : (
