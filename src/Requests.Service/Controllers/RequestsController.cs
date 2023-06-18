@@ -27,14 +27,16 @@ public class RequestsController : ControllerBase
 
         if (request.Assets.Count > 0)
         {
-            Uri uri = new Uri("rabbitmq://localhost/requestsQueue");
+            // Uri uri = new Uri("rabbitmq:///requestsQueue");
 
-            var endpoint = await _bus.GetSendEndpoint(uri);
+            // var endpoint = await _bus.GetSendEndpoint(uri);
+
+
 
             foreach (var a in request.Assets)
             {
                 if (a.Id != null && request.Id != null)
-                    await endpoint.Send(new AssetAddedToRequestEvent(a.Id, request.Id));
+                    await _bus.Publish(new AssetAddedToRequestEvent(a.Id, request.Id));
             }
 
         }
