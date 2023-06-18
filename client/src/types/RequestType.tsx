@@ -20,8 +20,8 @@ export type Request = {
 
 export type Comment = {
     id?: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
     content: string;
     createdBy: UserRef;
 };
