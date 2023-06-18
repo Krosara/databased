@@ -83,9 +83,13 @@ function App() {
                 )}
             </div>
             <div className="flex h-full">
-                <div className="inline-block w-1">
-                    <Menu model={pages} className="w-auto h-full" />
-                </div>
+                {isAuthenticated ? (
+                    <div className="inline-block w-1">
+                        <Menu model={pages} className="w-auto h-full" />
+                    </div>
+                ) : (
+                    <div></div>
+                )}
                 <div className="inline-block h-full w-full">
                     <RouterProvider router={router} />
                 </div>
